@@ -1,0 +1,35 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+INSERT {
+    GRAPH <https://w3id.org/wfs/poc/graph/provenance> {
+        ex:assessment-002
+            a wfs:ReadinessAssessment, prov:Activity ;
+            wfs:aboutOperator ex:alex ;
+            wfs:aboutTask ex:conveyor-vibration-inspection ;
+            wfs:competenceStatus wfs:CompetenceGapDetected ;
+            wfs:missingCompetence
+                <http://data.europa.eu/esco/skill/74374d09-7a54-4a05-ae78-d5940423de7c> ;
+            wfs:usedRule ex:rule-conveyor-junior-testing-gap-v1 ;
+            prov:used
+                ex:alex-profile-v1,
+                ex:conveyor-vibration-inspection,
+                ex:rule-conveyor-junior-testing-gap-v1 ;
+            prov:wasAssociatedWith ex:claude ;
+            prov:endedAtTime ?now .
+
+        ex:recommendation-002
+            a wfs:Recommendation, prov:Entity ;
+            dcterms:description
+                "Approve the task only with supervision, subject to the supervisor's final decision."@en ;
+            wfs:decisionOutcome wfs:ApproveWithSupervision ;
+            prov:wasGeneratedBy ex:assessment-002 ;
+            prov:wasAttributedTo ex:claude ;
+            prov:generatedAtTime ?now .
+    }
+}
+WHERE {
+    BIND(NOW() AS ?now)
+}

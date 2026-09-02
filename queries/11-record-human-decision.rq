@@ -1,0 +1,29 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+INSERT {
+    GRAPH <https://w3id.org/wfs/poc/graph/provenance> {
+        ex:supervisor-review-002
+            a wfs:HumanReview, prov:Activity ;
+            prov:used ex:recommendation-002 ;
+            prov:wasAssociatedWith ex:maria ;
+            prov:endedAtTime ?now .
+
+        ex:human-decision-002
+            a wfs:HumanDecision, prov:Entity ;
+            wfs:decisionOutcome wfs:ApproveWithSupervision ;
+            prov:wasGeneratedBy ex:supervisor-review-002 ;
+            prov:wasAttributedTo ex:maria ;
+            prov:generatedAtTime ?now .
+
+        ex:operator-acknowledgement-002
+            a wfs:OperatorAcknowledgement, prov:Activity ;
+            prov:used ex:human-decision-002 ;
+            prov:wasAssociatedWith ex:alex ;
+            prov:endedAtTime ?now .
+    }
+}
+WHERE {
+    BIND(NOW() AS ?now)
+}

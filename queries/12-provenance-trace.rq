@@ -1,0 +1,38 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+# A compact view of the main resources created by the end-to-end demo.
+SELECT ?resource ?type ?relatedProperty ?relatedResource
+WHERE {
+    VALUES ?resource {
+        ex:rule-submission-001
+        ex:rule-conveyor-junior-testing-gap-v1
+        ex:rule-validation-001
+        ex:validation-report-001
+        ex:rule-review-001
+        ex:rule-approval-001
+        ex:assessment-002
+        ex:recommendation-002
+        ex:supervisor-review-002
+        ex:human-decision-002
+        ex:operator-acknowledgement-002
+    }
+
+    OPTIONAL { ?resource a ?type . }
+    OPTIONAL {
+        ?resource ?relatedProperty ?relatedResource .
+        FILTER(
+            ?relatedProperty IN (
+                prov:used,
+                prov:wasGeneratedBy,
+                prov:wasAttributedTo,
+                prov:wasAssociatedWith,
+                prov:wasDerivedFrom,
+                wfs:usedRule,
+                wfs:decisionOutcome
+            )
+        )
+    }
+}
+ORDER BY ?resource ?relatedProperty

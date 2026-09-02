@@ -1,0 +1,74 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX esco: <http://data.europa.eu/esco/model#>
+
+# A valid rule returns zero rows.
+SELECT ?problem ?value
+WHERE {
+    VALUES ?rule {
+        ex:rule-conveyor-junior-testing-gap-v1
+    }
+
+    {
+        GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+            ?rule wfs:appliesToTask ?value .
+        }
+        FILTER NOT EXISTS {
+            GRAPH <https://w3id.org/wfs/poc/graph/core> {
+                ?value a wfs:Task .
+            }
+        }
+        BIND("Unknown task IRI" AS ?problem)
+    }
+    UNION
+    {
+        GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+            ?rule wfs:appliesToOccupation ?value .
+        }
+        FILTER NOT EXISTS {
+            GRAPH <https://w3id.org/wfs/poc/graph/esco> {
+                ?value a esco:Occupation .
+            }
+        }
+        BIND("Unknown ESCO occupation IRI" AS ?problem)
+    }
+    UNION
+    {
+        GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+            ?rule wfs:triggerMissingCompetence ?value .
+        }
+        FILTER NOT EXISTS {
+            GRAPH <https://w3id.org/wfs/poc/graph/esco> {
+                ?value a esco:Skill .
+            }
+        }
+        BIND("Unknown ESCO skill IRI" AS ?problem)
+    }
+    UNION
+    {
+        GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+            ?rule wfs:appliesToOperatorLevel ?value .
+        }
+        FILTER NOT EXISTS {
+            GRAPH <https://w3id.org/wfs/poc/graph/core> {
+                ?value a wfs:OperatorLevel .
+            }
+        }
+        BIND("Unknown operator level" AS ?problem)
+    }
+    UNION
+    {
+        GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+            ?rule
+                wfs:appliesToTask ?task ;
+                wfs:triggerMissingCompetence ?value .
+        }
+        FILTER NOT EXISTS {
+            GRAPH <https://w3id.org/wfs/poc/graph/core> {
+                ?task wfs:requiresCompetence ?value .
+            }
+        }
+        BIND("The trigger skill is not a requirement of the task" AS ?problem)
+    }
+}
+ORDER BY ?problem

@@ -1,0 +1,25 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+
+SELECT
+    ?rule
+    ?text
+    ?task
+    ?skill
+    ?authority
+    ?review
+    ?outcome
+    ?status
+WHERE {
+    GRAPH <https://w3id.org/wfs/poc/graph/active-rules> {
+        ?rule
+            a wfs:FormalRule ;
+            wfs:originalRuleText ?text ;
+            wfs:appliesToTask ?task ;
+            wfs:triggerMissingCompetence ?skill ;
+            wfs:setsDecisionAuthority ?authority ;
+            wfs:setsHumanReview ?review ;
+            wfs:recommendedOutcome ?outcome ;
+            wfs:ruleStatus ?status .
+    }
+}

@@ -1,0 +1,25 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+# Run only after SHACL, reference, conflict, and safety checks pass.
+INSERT {
+    GRAPH <https://w3id.org/wfs/poc/graph/provenance> {
+        ex:rule-validation-001
+            a wfs:RuleValidation, prov:Activity ;
+            prov:used ex:rule-conveyor-junior-testing-gap-v1 ;
+            prov:wasAssociatedWith ex:graphdb ;
+            prov:endedAtTime ?now .
+
+        ex:validation-report-001
+            a wfs:ValidationReport, prov:Entity ;
+            wfs:validationStatus wfs:ValidationPassed ;
+            wfs:validationMessage
+                "SHACL structure, graph references, conflict, and safety checks passed." ;
+            prov:wasGeneratedBy ex:rule-validation-001 ;
+            prov:generatedAtTime ?now .
+    }
+}
+WHERE {
+    BIND(NOW() AS ?now)
+}

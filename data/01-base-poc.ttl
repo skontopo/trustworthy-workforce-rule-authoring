@@ -1,0 +1,177 @@
+@prefix wfs: <https://w3id.org/wfs/poc#> .
+@prefix ex: <https://w3id.org/wfs/poc/resource/> .
+@prefix esco: <http://data.europa.eu/esco/model#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+############################################################
+# Minimal PoC vocabulary from the earlier scenario
+############################################################
+
+wfs:Operator a owl:Class ;
+    rdfs:label "Operator"@en .
+
+wfs:Supervisor a owl:Class ;
+    rdfs:label "Supervisor"@en .
+
+wfs:Task a owl:Class ;
+    rdfs:label "Task"@en .
+
+wfs:OperatorProfile a owl:Class ;
+    rdfs:label "Operator profile"@en .
+
+wfs:DecisionAuthority a owl:Class ;
+    rdfs:label "Decision authority"@en .
+
+wfs:CompetenceStatus a owl:Class ;
+    rdfs:label "Competence status"@en .
+
+wfs:ReadinessAssessment a owl:Class ;
+    rdfs:label "Readiness assessment"@en .
+
+wfs:Recommendation a owl:Class ;
+    rdfs:label "Recommendation"@en .
+
+wfs:HumanReview a owl:Class ;
+    rdfs:label "Human review"@en .
+
+wfs:HumanDecision a owl:Class ;
+    rdfs:label "Human decision"@en .
+
+wfs:OperatorAcknowledgement a owl:Class ;
+    rdfs:label "Operator acknowledgement"@en .
+
+############################################################
+# Properties
+############################################################
+
+wfs:hasOccupation a owl:ObjectProperty ;
+    rdfs:domain wfs:Operator ;
+    rdfs:range esco:Occupation .
+
+wfs:describesOperator a owl:ObjectProperty ;
+    rdfs:domain wfs:OperatorProfile ;
+    rdfs:range wfs:Operator .
+
+wfs:assertsCompetence a owl:ObjectProperty ;
+    rdfs:domain wfs:OperatorProfile ;
+    rdfs:range esco:Skill .
+
+wfs:requiresCompetence a owl:ObjectProperty ;
+    rdfs:domain wfs:Task ;
+    rdfs:range esco:Skill .
+
+wfs:decisionAuthority a owl:ObjectProperty ;
+    rdfs:domain wfs:Task ;
+    rdfs:range wfs:DecisionAuthority .
+
+wfs:requiresHumanReview a owl:DatatypeProperty ;
+    rdfs:range xsd:boolean .
+
+wfs:aboutOperator a owl:ObjectProperty ;
+    rdfs:range wfs:Operator .
+
+wfs:aboutTask a owl:ObjectProperty ;
+    rdfs:range wfs:Task .
+
+wfs:competenceStatus a owl:ObjectProperty ;
+    rdfs:range wfs:CompetenceStatus .
+
+wfs:missingCompetence a owl:ObjectProperty ;
+    rdfs:range esco:Skill .
+
+wfs:decisionOutcome a owl:ObjectProperty .
+
+############################################################
+# Controlled values
+############################################################
+
+wfs:Advisory
+    a wfs:DecisionAuthority, skos:Concept ;
+    skos:prefLabel "Advisory"@en .
+
+wfs:CoDecision
+    a wfs:DecisionAuthority, skos:Concept ;
+    skos:prefLabel "Co-decision"@en .
+
+wfs:OperatorExclusive
+    a wfs:DecisionAuthority, skos:Concept ;
+    skos:prefLabel "Operator-exclusive"@en .
+
+wfs:RequirementsMet
+    a wfs:CompetenceStatus, skos:Concept ;
+    skos:prefLabel "Competence requirements met"@en .
+
+wfs:CompetenceGapDetected
+    a wfs:CompetenceStatus, skos:Concept ;
+    skos:prefLabel "Competence gap detected"@en .
+
+wfs:ApproveWithSupervision
+    a skos:Concept ;
+    skos:prefLabel "Approve with supervision"@en .
+
+wfs:ApproveIndependently
+    a skos:Concept ;
+    skos:prefLabel "Approve independently"@en .
+
+wfs:Reject
+    a skos:Concept ;
+    skos:prefLabel "Reject"@en .
+
+wfs:Reassign
+    a skos:Concept ;
+    skos:prefLabel "Reassign to another operator"@en .
+
+############################################################
+# Agents
+############################################################
+
+ex:alex
+    a wfs:Operator, prov:Person ;
+    rdfs:label "Alex"@en ;
+    wfs:hasOccupation
+        <http://data.europa.eu/esco/occupation/269c47e7-9017-4aa6-bce8-49e89a696a64> .
+
+ex:maria
+    a wfs:Supervisor, prov:Person ;
+    rdfs:label "Maria"@en .
+
+ex:claude
+    a prov:SoftwareAgent ;
+    rdfs:label "Claude Desktop"@en .
+
+############################################################
+# Alex's verified competence profile
+############################################################
+
+ex:alex-profile-v1
+    a wfs:OperatorProfile, prov:Entity ;
+    dcterms:title "Alex's verified competence profile"@en ;
+    wfs:describesOperator ex:alex ;
+    wfs:assertsCompetence
+        <http://data.europa.eu/esco/skill/65a3a184-7d11-4db9-9b85-281961d1514b>,
+        <http://data.europa.eu/esco/skill/94747ff4-603d-47d4-9780-bf53be41e190>,
+        <http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40> ;
+    prov:wasAttributedTo ex:maria ;
+    prov:generatedAtTime "2026-07-22T09:00:00Z"^^xsd:dateTime .
+
+############################################################
+# Task
+############################################################
+
+ex:conveyor-vibration-inspection
+    a wfs:Task, prov:Entity ;
+    dcterms:title
+        "Preliminary inspection of abnormal vibration in a conveyor drive"@en ;
+    dcterms:description
+        "A preliminary, non-invasive inspection and reporting task. It does not include repair, dismantling, machine isolation, restart, shutdown, or a final safety determination."@en ;
+    wfs:requiresCompetence
+        <http://data.europa.eu/esco/skill/65a3a184-7d11-4db9-9b85-281961d1514b>,
+        <http://data.europa.eu/esco/skill/94747ff4-603d-47d4-9780-bf53be41e190>,
+        <http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40>,
+        <http://data.europa.eu/esco/skill/74374d09-7a54-4a05-ae78-d5940423de7c> ;
+    prov:wasAttributedTo ex:maria .

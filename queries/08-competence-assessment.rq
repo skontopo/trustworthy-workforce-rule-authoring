@@ -1,0 +1,31 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?skill ?label ?status
+WHERE {
+    GRAPH <https://w3id.org/wfs/poc/graph/core> {
+        ex:conveyor-vibration-inspection
+            wfs:requiresCompetence ?skill .
+    }
+
+    GRAPH <https://w3id.org/wfs/poc/graph/esco> {
+        ?skill skos:prefLabel ?label .
+        FILTER(LANGMATCHES(LANG(?label), "en"))
+    }
+
+    BIND(
+        IF(
+            EXISTS {
+                GRAPH <https://w3id.org/wfs/poc/graph/core> {
+                    ex:alex-profile-v1
+                        wfs:assertsCompetence ?skill .
+                }
+            },
+            "verified",
+            "missing"
+        )
+        AS ?status
+    )
+}
+ORDER BY ?status ?label

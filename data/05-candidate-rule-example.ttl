@@ -1,0 +1,34 @@
+@prefix wfs: <https://w3id.org/wfs/poc#> .
+@prefix ex: <https://w3id.org/wfs/poc/resource/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# This file is the expected output of the Claude formalization step.
+# Do not import it during initial setup. Import it only when the README
+# reaches the candidate-rule step.
+
+ex:rule-conveyor-junior-testing-gap-v1
+    a wfs:FormalRule, prov:Entity ;
+    dcterms:title
+        "Supervision rule for a missing testing-equipment competence"@en ;
+    wfs:originalRuleText
+        "If a junior industrial machinery mechanic does not have verified competence to use testing equipment, the preliminary inspection of abnormal vibration in a conveyor drive requires human review and may only be approved with supervision." ;
+    wfs:appliesToTask ex:conveyor-vibration-inspection ;
+    wfs:appliesToOccupation
+        <http://data.europa.eu/esco/occupation/269c47e7-9017-4aa6-bce8-49e89a696a64> ;
+    wfs:appliesToOperatorLevel wfs:Junior ;
+    wfs:triggerMissingCompetence
+        <http://data.europa.eu/esco/skill/74374d09-7a54-4a05-ae78-d5940423de7c> ;
+    wfs:setsDecisionAuthority wfs:CoDecision ;
+    wfs:setsHumanReview true ;
+    wfs:recommendedOutcome wfs:ApproveWithSupervision ;
+    wfs:ruleVersion 1 ;
+    wfs:ruleStatus wfs:Candidate ;
+    prov:wasDerivedFrom ex:rule-submission-001 ;
+    prov:wasAttributedTo ex:maria ;
+    prov:wasGeneratedBy ex:formalization-001 .
+
+ex:formalization-001
+    a wfs:RuleFormalization, prov:Activity ;
+    prov:used ex:rule-submission-001 ;
+    prov:wasAssociatedWith ex:claude .

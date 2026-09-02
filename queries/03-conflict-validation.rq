@@ -1,0 +1,50 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+
+# Zero rows means no duplicate or conflicting active rule was found.
+SELECT
+    ?existingRule
+    ?result
+    ?candidateAuthority
+    ?existingAuthority
+    ?candidateOutcome
+    ?existingOutcome
+WHERE {
+    VALUES ?candidate {
+        ex:rule-conveyor-junior-testing-gap-v1
+    }
+
+    GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+        ?candidate
+            wfs:appliesToTask ?task ;
+            wfs:appliesToOccupation ?occupation ;
+            wfs:appliesToOperatorLevel ?level ;
+            wfs:triggerMissingCompetence ?skill ;
+            wfs:setsDecisionAuthority ?candidateAuthority ;
+            wfs:setsHumanReview ?candidateReview ;
+            wfs:recommendedOutcome ?candidateOutcome .
+    }
+
+    GRAPH <https://w3id.org/wfs/poc/graph/active-rules> {
+        ?existingRule
+            wfs:ruleStatus wfs:Approved ;
+            wfs:appliesToTask ?task ;
+            wfs:appliesToOccupation ?occupation ;
+            wfs:appliesToOperatorLevel ?level ;
+            wfs:triggerMissingCompetence ?skill ;
+            wfs:setsDecisionAuthority ?existingAuthority ;
+            wfs:setsHumanReview ?existingReview ;
+            wfs:recommendedOutcome ?existingOutcome .
+    }
+
+    BIND(
+        IF(
+            ?candidateAuthority = ?existingAuthority &&
+            ?candidateReview = ?existingReview &&
+            ?candidateOutcome = ?existingOutcome,
+            "DUPLICATE",
+            "CONFLICT"
+        )
+        AS ?result
+    )
+}

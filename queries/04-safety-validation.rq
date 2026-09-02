@@ -1,0 +1,42 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+
+# A valid rule returns zero rows.
+SELECT ?problem
+WHERE {
+    VALUES ?rule {
+        ex:rule-conveyor-junior-testing-gap-v1
+    }
+
+    {
+        GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+            ?rule
+                wfs:triggerMissingCompetence ?skill ;
+                wfs:recommendedOutcome wfs:ApproveIndependently .
+        }
+        BIND("Missing competence cannot lead to independent approval" AS ?problem)
+    }
+    UNION
+    {
+        GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+            ?rule
+                wfs:setsDecisionAuthority ?authority ;
+                wfs:setsHumanReview false .
+        }
+        VALUES ?authority {
+            wfs:CoDecision
+            wfs:OperatorExclusive
+        }
+        BIND("This authority level requires human review" AS ?problem)
+    }
+    UNION
+    {
+        GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+            ?rule
+                wfs:recommendedOutcome wfs:ApproveWithSupervision ;
+                wfs:setsDecisionAuthority ?authority .
+        }
+        FILTER(?authority != wfs:CoDecision)
+        BIND("Approval with supervision must use co-decision" AS ?problem)
+    }
+}

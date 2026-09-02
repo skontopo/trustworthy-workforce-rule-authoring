@@ -1,0 +1,6 @@
+# Optional: remove only the graphs created during the rule-authoring demo.
+# The core and ESCO graphs are kept.
+CLEAR GRAPH <https://w3id.org/wfs/poc/graph/submissions> ;
+CLEAR GRAPH <https://w3id.org/wfs/poc/graph/candidates> ;
+CLEAR GRAPH <https://w3id.org/wfs/poc/graph/active-rules> ;
+CLEAR GRAPH <https://w3id.org/wfs/poc/graph/provenance>

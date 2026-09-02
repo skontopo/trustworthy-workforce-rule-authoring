@@ -1,0 +1,39 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+# Run manually only after Maria chooses APPROVE.
+# Candidate status is not copied; the active rule receives Approved status.
+INSERT {
+    GRAPH <https://w3id.org/wfs/poc/graph/active-rules> {
+        ?rule ?property ?value .
+        ?rule wfs:ruleStatus wfs:Approved .
+    }
+
+    GRAPH <https://w3id.org/wfs/poc/graph/provenance> {
+        ex:rule-review-001
+            a wfs:RuleReview, prov:Activity ;
+            prov:used ?rule, ex:validation-report-001 ;
+            prov:wasAssociatedWith ex:maria ;
+            prov:endedAtTime ?now .
+
+        ex:rule-approval-001
+            a wfs:RuleApproval, prov:Entity ;
+            wfs:decisionOutcome wfs:Approved ;
+            prov:wasGeneratedBy ex:rule-review-001 ;
+            prov:wasAttributedTo ex:maria ;
+            prov:generatedAtTime ?now .
+    }
+}
+WHERE {
+    VALUES ?rule {
+        ex:rule-conveyor-junior-testing-gap-v1
+    }
+
+    GRAPH <https://w3id.org/wfs/poc/graph/candidates> {
+        ?rule ?property ?value .
+        FILTER(?property != wfs:ruleStatus)
+    }
+
+    BIND(NOW() AS ?now)
+}

@@ -1,0 +1,172 @@
+@prefix wfs: <https://w3id.org/wfs/poc#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Prefix declarations used inside SHACL-SPARQL constraints.
+wfs:PrefixDeclarations
+    sh:declare [
+        sh:prefix "wfs" ;
+        sh:namespace "https://w3id.org/wfs/poc#"^^xsd:anyURI
+    ] .
+
+wfs:FormalRuleShape
+    a sh:NodeShape ;
+    sh:targetClass wfs:FormalRule ;
+
+    sh:property [
+        sh:path wfs:originalRuleText ;
+        sh:datatype xsd:string ;
+        sh:minLength 20 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A rule must contain one natural-language statement."
+    ] ;
+
+    sh:property [
+        sh:path wfs:appliesToTask ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A rule must refer to exactly one task."
+    ] ;
+
+    sh:property [
+        sh:path wfs:appliesToOccupation ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A rule must refer to exactly one occupation."
+    ] ;
+
+    sh:property [
+        sh:path wfs:appliesToOperatorLevel ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A rule must refer to exactly one operator level."
+    ] ;
+
+    sh:property [
+        sh:path wfs:triggerMissingCompetence ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A rule must identify one missing competence."
+    ] ;
+
+    sh:property [
+        sh:path wfs:setsDecisionAuthority ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in (
+            wfs:Advisory
+            wfs:CoDecision
+            wfs:OperatorExclusive
+        ) ;
+        sh:message "The decision authority is not valid."
+    ] ;
+
+    sh:property [
+        sh:path wfs:setsHumanReview ;
+        sh:datatype xsd:boolean ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "The rule must state whether human review is required."
+    ] ;
+
+    sh:property [
+        sh:path wfs:recommendedOutcome ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in (
+            wfs:ApproveWithSupervision
+            wfs:ApproveIndependently
+            wfs:Reject
+            wfs:Reassign
+        ) ;
+        sh:message "The recommended outcome is not valid."
+    ] ;
+
+    sh:property [
+        sh:path wfs:ruleVersion ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 1 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "The rule must have a positive integer version."
+    ] ;
+
+    sh:property [
+        sh:path prov:wasDerivedFrom ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "The rule must refer to its original submission."
+    ] ;
+
+    sh:property [
+        sh:path prov:wasGeneratedBy ;
+        sh:nodeKind sh:IRI ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "The rule must refer to its formalization activity."
+    ] ;
+
+    # Safety constraint 1: a missing competence cannot lead to
+    # independent approval.
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes wfs:PrefixDeclarations ;
+        sh:message "A missing-competence rule cannot approve independent work." ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this
+                    wfs:triggerMissingCompetence ?skill ;
+                    wfs:recommendedOutcome wfs:ApproveIndependently .
+            }
+        """
+    ] ;
+
+    # Safety constraint 2: co-decision and operator-exclusive cases
+    # require human review.
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes wfs:PrefixDeclarations ;
+        sh:message "Co-decision and operator-exclusive rules require human review." ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this
+                    wfs:setsDecisionAuthority ?authority ;
+                    wfs:setsHumanReview false .
+
+                VALUES ?authority {
+                    wfs:CoDecision
+                    wfs:OperatorExclusive
+                }
+            }
+        """
+    ] ;
+
+    # Safety constraint 3: operator-exclusive rules cannot recommend
+    # approval.
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:prefixes wfs:PrefixDeclarations ;
+        sh:message "An operator-exclusive rule cannot recommend approval." ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this
+                    wfs:setsDecisionAuthority wfs:OperatorExclusive ;
+                    wfs:recommendedOutcome ?outcome .
+
+                VALUES ?outcome {
+                    wfs:ApproveIndependently
+                    wfs:ApproveWithSupervision
+                }
+            }
+        """
+    ] .

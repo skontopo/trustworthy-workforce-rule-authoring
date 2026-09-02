@@ -1,0 +1,18 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+INSERT {
+    GRAPH <https://w3id.org/wfs/poc/graph/submissions> {
+        ex:rule-submission-001
+            a wfs:RuleSubmission, prov:Entity ;
+            wfs:originalRuleText
+                "If a junior industrial machinery mechanic does not have verified competence to use testing equipment, the preliminary inspection of abnormal vibration in a conveyor drive requires human review and may only be approved with supervision." ;
+            wfs:ruleStatus wfs:Draft ;
+            prov:wasAttributedTo ex:maria ;
+            prov:generatedAtTime ?now .
+    }
+}
+WHERE {
+    BIND(NOW() AS ?now)
+}

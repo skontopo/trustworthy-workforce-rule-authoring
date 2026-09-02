@@ -1,0 +1,53 @@
+PREFIX wfs: <https://w3id.org/wfs/poc#>
+PREFIX ex: <https://w3id.org/wfs/poc/resource/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT
+    ?rule
+    ?ruleText
+    ?missingSkill
+    ?missingSkillLabel
+    ?authority
+    ?humanReview
+    ?recommendedOutcome
+    ?outcomeLabel
+WHERE {
+    GRAPH <https://w3id.org/wfs/poc/graph/core> {
+        ex:alex
+            wfs:hasOccupation ?occupation ;
+            wfs:operatorLevel ?level .
+
+        ex:conveyor-vibration-inspection
+            wfs:requiresCompetence ?missingSkill .
+    }
+
+    GRAPH <https://w3id.org/wfs/poc/graph/active-rules> {
+        ?rule
+            a wfs:FormalRule ;
+            wfs:ruleStatus wfs:Approved ;
+            wfs:appliesToTask ex:conveyor-vibration-inspection ;
+            wfs:appliesToOccupation ?occupation ;
+            wfs:appliesToOperatorLevel ?level ;
+            wfs:triggerMissingCompetence ?missingSkill ;
+            wfs:setsDecisionAuthority ?authority ;
+            wfs:setsHumanReview ?humanReview ;
+            wfs:recommendedOutcome ?recommendedOutcome ;
+            wfs:originalRuleText ?ruleText .
+    }
+
+    FILTER NOT EXISTS {
+        GRAPH <https://w3id.org/wfs/poc/graph/core> {
+            ex:alex-profile-v1
+                wfs:assertsCompetence ?missingSkill .
+        }
+    }
+
+    GRAPH <https://w3id.org/wfs/poc/graph/esco> {
+        ?missingSkill skos:prefLabel ?missingSkillLabel .
+        FILTER(LANGMATCHES(LANG(?missingSkillLabel), "en"))
+    }
+
+    GRAPH <https://w3id.org/wfs/poc/graph/core> {
+        ?recommendedOutcome skos:prefLabel ?outcomeLabel .
+    }
+}

@@ -1,0 +1,157 @@
+@prefix wfs: <https://w3id.org/wfs/poc#> .
+@prefix ex: <https://w3id.org/wfs/poc/resource/> .
+@prefix esco: <http://data.europa.eu/esco/model#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+############################################################
+# Classes used by the governed rule-authoring extension
+############################################################
+
+wfs:RuleSubmission a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Rule submission"@en .
+
+wfs:FormalRule a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Formal rule"@en .
+
+wfs:RuleFormalization a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "Rule formalization"@en .
+
+wfs:RuleValidation a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "Rule validation"@en .
+
+wfs:ValidationReport a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Validation report"@en .
+
+wfs:RuleReview a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "Rule review"@en .
+
+wfs:RuleApproval a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Rule approval"@en .
+
+wfs:OperatorLevel a owl:Class ;
+    rdfs:label "Operator level"@en .
+
+wfs:RuleStatus a owl:Class ;
+    rdfs:label "Rule status"@en .
+
+wfs:ValidationStatus a owl:Class ;
+    rdfs:label "Validation status"@en .
+
+############################################################
+# Properties
+############################################################
+
+wfs:operatorLevel a owl:ObjectProperty ;
+    rdfs:domain wfs:Operator ;
+    rdfs:range wfs:OperatorLevel ;
+    rdfs:label "operator level"@en .
+
+wfs:originalRuleText a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "original rule text"@en .
+
+wfs:appliesToTask a owl:ObjectProperty ;
+    rdfs:domain wfs:FormalRule ;
+    rdfs:range wfs:Task ;
+    rdfs:label "applies to task"@en .
+
+wfs:appliesToOccupation a owl:ObjectProperty ;
+    rdfs:domain wfs:FormalRule ;
+    rdfs:range esco:Occupation ;
+    rdfs:label "applies to occupation"@en .
+
+wfs:appliesToOperatorLevel a owl:ObjectProperty ;
+    rdfs:domain wfs:FormalRule ;
+    rdfs:range wfs:OperatorLevel ;
+    rdfs:label "applies to operator level"@en .
+
+wfs:triggerMissingCompetence a owl:ObjectProperty ;
+    rdfs:domain wfs:FormalRule ;
+    rdfs:range esco:Skill ;
+    rdfs:label "triggered by missing competence"@en .
+
+wfs:setsDecisionAuthority a owl:ObjectProperty ;
+    rdfs:domain wfs:FormalRule ;
+    rdfs:range wfs:DecisionAuthority ;
+    rdfs:label "sets decision authority"@en .
+
+wfs:setsHumanReview a owl:DatatypeProperty ;
+    rdfs:domain wfs:FormalRule ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "sets human review requirement"@en .
+
+wfs:recommendedOutcome a owl:ObjectProperty ;
+    rdfs:domain wfs:FormalRule ;
+    rdfs:label "recommended outcome"@en .
+
+wfs:ruleVersion a owl:DatatypeProperty ;
+    rdfs:domain wfs:FormalRule ;
+    rdfs:range xsd:integer ;
+    rdfs:label "rule version"@en .
+
+wfs:ruleStatus a owl:ObjectProperty ;
+    rdfs:range wfs:RuleStatus ;
+    rdfs:label "rule status"@en .
+
+wfs:validationStatus a owl:ObjectProperty ;
+    rdfs:range wfs:ValidationStatus ;
+    rdfs:label "validation status"@en .
+
+wfs:validationMessage a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "validation message"@en .
+
+wfs:usedRule a owl:ObjectProperty ;
+    rdfs:range wfs:FormalRule ;
+    rdfs:label "used rule"@en .
+
+############################################################
+# Controlled values
+############################################################
+
+wfs:Junior a wfs:OperatorLevel, skos:Concept ;
+    skos:prefLabel "Junior"@en .
+
+wfs:Senior a wfs:OperatorLevel, skos:Concept ;
+    skos:prefLabel "Senior"@en .
+
+wfs:Draft a wfs:RuleStatus, skos:Concept ;
+    skos:prefLabel "Draft"@en .
+
+wfs:Candidate a wfs:RuleStatus, skos:Concept ;
+    skos:prefLabel "Candidate"@en .
+
+wfs:Approved a wfs:RuleStatus, skos:Concept ;
+    skos:prefLabel "Approved"@en .
+
+wfs:Rejected a wfs:RuleStatus, skos:Concept ;
+    skos:prefLabel "Rejected"@en .
+
+wfs:Superseded a wfs:RuleStatus, skos:Concept ;
+    skos:prefLabel "Superseded"@en .
+
+wfs:ValidationPassed a wfs:ValidationStatus, skos:Concept ;
+    skos:prefLabel "Validation passed"@en .
+
+wfs:ValidationFailed a wfs:ValidationStatus, skos:Concept ;
+    skos:prefLabel "Validation failed"@en .
+
+############################################################
+# Extra agents and operator facts for this PoC
+############################################################
+
+ex:graphdb a prov:SoftwareAgent ;
+    rdfs:label "GraphDB"@en .
+
+ex:alex wfs:operatorLevel wfs:Junior .

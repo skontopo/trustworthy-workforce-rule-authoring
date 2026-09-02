@@ -1,0 +1,25 @@
+@prefix esco: <http://data.europa.eu/esco/model#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# Minimal ESCO subset required to reproduce the running example.
+# The full ESCO dataset can be used instead, but it is not required.
+
+<http://data.europa.eu/esco/occupation/269c47e7-9017-4aa6-bce8-49e89a696a64>
+    a esco:Occupation ;
+    skos:prefLabel "industrial machinery mechanic"@en .
+
+<http://data.europa.eu/esco/skill/65a3a184-7d11-4db9-9b85-281961d1514b>
+    a esco:Skill ;
+    skos:prefLabel "conduct routine machinery checks"@en .
+
+<http://data.europa.eu/esco/skill/94747ff4-603d-47d4-9780-bf53be41e190>
+    a esco:Skill ;
+    skos:prefLabel "inspect industrial equipment"@en .
+
+<http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40>
+    a esco:Skill ;
+    skos:prefLabel "troubleshoot"@en .
+
+<http://data.europa.eu/esco/skill/74374d09-7a54-4a05-ae78-d5940423de7c>
+    a esco:Skill ;
+    skos:prefLabel "use testing equipment"@en .
