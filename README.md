@@ -848,3 +848,11 @@ Check all of the following:
 - Model Context Protocol - Connect to local MCP servers: https://modelcontextprotocol.io/docs/develop
 - SHACL Recommendation: https://www.w3.org/TR/shacl/
 - PROV-O Recommendation: https://www.w3.org/TR/prov-o/
+
+## License
+
+The original resources in this repository are released under the
+[MIT License](LICENSE), unless otherwise stated.
+
+Third-party resources, including ESCO concepts and identifiers, remain
+subject to the terms and conditions of their respective providers.
